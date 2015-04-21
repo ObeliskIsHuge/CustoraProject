@@ -14,6 +14,9 @@ gem 'coffee-rails', '~> 4.1.0'
 # See https://github.com/sstephenson/execjs#readme for more supported runtimes
 # gem 'therubyracer', platforms: :ruby
 
+# adds unit testing
+gem 'test-unit', '~> 3.0.9'
+
 # Rest client as required from the sample code
 gem 'rest-client', '1.8.0'
 

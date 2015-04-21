@@ -2,6 +2,11 @@
 #
 #
 
+require 'rubygems'
+require 'bundler/setup'
+require 'json'
+require 'rest-client'
+
 # host = 'http://job-queue-dev.elasticbeanstalk.com'
 
 # Creates a new Instance of the game
@@ -13,15 +18,18 @@ def createNewGame (version)
 
   host = 'http://job-queue-dev.elasticbeanstalk.com'
 
-  if version.equal? 'long'
-    type = true
+  # creates a long game when true
+  if version == 'long'
+    game_json = RestClient.post(
+        "#{host}/games",
+        { long: true }
+    ).body
   else
-    type = false
+    game_json = RestClient.post(
+        "#{host}/games",
+        {}
+    ).body
   end
-  game_json = RestClient.post(
-      "#{host}/games",
-   { long: type }
-  ).body
 
  JSON.parse(game_json)
 end
