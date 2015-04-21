@@ -9,13 +9,22 @@ class Machine
   # class constructor
   # @param machine_id is the id of the machine
   # @param game_id is the id of the game
-  def initialize ( machine_id , game_id )
+  # @param game_length is the length of the game
+  def initialize ( machine_id , game_id , game_length )
     @machine_id = machine_id
     @game_id = game_id
     @jobs_in_queue = []
     @jobs_in_memory = []
     @memory_available = 64
-    @terminated = false #TODO this may be uncessary
+    @terminated = false #TODO this may be unnecessary
+
+    # Determines how long we want our job queue to be
+    if game_length.eql?('short')
+      @max_queue_length = 5
+    else
+      @max_queue_length = 10
+    end
+
   end
 
   # prints instance variables as a string
@@ -25,6 +34,8 @@ class Machine
 
   # method updates a machine object after a turn
   def update
+    #TODO decrement a turn from everything in queue. Delete values
+    # whose turn is now zero. Swap values from the queue to machine as necessary
   end
 
 
@@ -32,13 +43,26 @@ class Machine
   def add_to_machine( job )
 
 
-    if( @memory_available - job.memory > 0 )
-      $jobs_in_memory.push( job )
+    if @memory_available - job.memory  > 0
+
+      @jobs_in_memory.push( job )
       @memory_available -= job.memory
     else
-      add_to_queue(job)
+      add_to_queue( job )
     end
   end
+
+
+  # Determines if this machine should accept more jobs or not
+  def canAcceptMoreJobs ( job )
+
+    if @memory_available -  job.memory > 0 || @jobs_in_queue.length <= @max_queue_length
+      true
+    else
+      false
+    end
+  end
+
 
 private
 
@@ -46,6 +70,8 @@ private
   def add_to_queue ( job )
     @jobs_in_queue.push( job )
   end
+
+
 
 
 end
