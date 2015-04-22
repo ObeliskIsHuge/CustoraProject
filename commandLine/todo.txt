@@ -1,2 +1,4 @@
 - In the driver file, throw an error when the number of jobs isn't equal to the number
   of jobs from the api
+- Talk explain in a readME file my thought processes, testing, object intentions,
+  where I could of done better, etc.

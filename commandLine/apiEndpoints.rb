@@ -43,7 +43,7 @@ def getGameData( game_id )
 
   # host = 'http://job-queue-dev.elasticbeanstalk.com'
 
-  info_json = RestClient.post("http://job-queue-dev.elasticbeanstalk.com/games/#{game_id}",
+  info_json = RestClient.get("http://job-queue-dev.elasticbeanstalk.com/games/#{game_id}",
                               {}).body
 
   JSON.parse(info_json)
@@ -92,23 +92,23 @@ def deleteMachine ( game_id , machine_id)
 
   host = 'http://job-queue-dev.elasticbeanstalk.com'
 
-  RestClient.delete("#{host}/games/#{game_id}/machines/#{machine_id}")
-  machine_json = RestClient.post("#{host}/games/#{game_id}/machines", {}).body
-  JSON.parse(machine_json)
+  deleted_machine = RestClient.delete("#{host}/games/#{game_id}/machines/#{machine_id}")
+  JSON.parse(deleted_machine)
 end
 
 # Assigns jobs to a machine
 #
 # @param game_id is the id of the game
 # @param machine_id is the id of the machine
-# @param job_ids is the id of the jobs
+# @param job_ids is an array of job ids
 # @return key-value array assigned jobs to the machine
 def assignJobs ( game_id , machine_id , job_ids)
 
   host = 'http://job-queue-dev.elasticbeanstalk.com'
 
-  RestClient.post(
+  jobs_assigned = RestClient.post(
       "#{host}/games/#{game_id}/machines/#{machine_id}/job_assignments",
       job_ids: JSON.dump(job_ids)
   ).body
+  JSON.parse(jobs_assigned)
 end
