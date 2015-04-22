@@ -3,22 +3,22 @@
 class Job
 
   # defines getters for our instance variables
-  attr_reader :id, :turns, :memory
+  attr_reader :id, :turns_left, :memory
 
   # Class constructor
   def initialize( id , turns , memory )
     @id = id
-    @turns = turns
+    @turns_left = turns
     @memory = memory
   end
 
   # Prints the instance variables of the job object
   def to_s
-    "Id: #{@id}, Turns left: #{@turns} , Memory required: #{@memory}"
+    "Id: #{@id}, Turns left: #{@turns_left} , Memory required: #{@memory}"
   end
 
   # Updates jobs after a turn has passed
   def update
-    @turns -= 1 unless @turns.zero?
+    @turns_left -= 1 unless @turns_left.zero?
   end
 end

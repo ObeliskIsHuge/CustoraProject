@@ -41,12 +41,9 @@ end
 # @return key-value array with game information
 def getGameData( game_id )
 
-  # host = 'http://job-queue-dev.elasticbeanstalk.com'
-
   info_json = RestClient.get("http://job-queue-dev.elasticbeanstalk.com/games/#{game_id}",
                               {}).body
-
-  JSON.parse(info_json)
+  JSON.parse( info_json )
 end
 
 
@@ -57,7 +54,6 @@ end
 def createNewMachine ( game_id )
 
   host = 'http://job-queue-dev.elasticbeanstalk.com'
-
 
   machine_json = RestClient.post(
       "#{host}/games/#{game_id}/machines",
@@ -79,7 +75,7 @@ def newTurn ( game_id )
   turn_json = RestClient.get(
       "#{host}/games/#{game_id}/next_turn"
   ).body
-  JSON.parse(turn_json)
+  JSON.parse( turn_json )
 end
 
 

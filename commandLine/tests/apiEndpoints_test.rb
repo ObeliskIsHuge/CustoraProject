@@ -60,12 +60,10 @@ class ApiEndpointsTest < Test::Unit::TestCase
     assert_equal(machine_jobs_data['running'] , 1 , 'running jobs is not one')
 
     # Tests the delete machine method
-
     deleted_machine = deleteMachine(game['id'] , machine_data['id'])
     assert_equal(deleted_machine['id'], machine_data['id'], 'deleted ids are not equal')
     assert_equal(deleted_machine['game_id'] , game['id'] , 'game ids are not equal')
     assert(deleted_machine['terminated'] , 'the machine was not terminated')
-
 
   end
 

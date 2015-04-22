@@ -3,8 +3,8 @@
 # "Cluster" is a group of a machine objects and this class
 # is used to manage groups of machines
 
-require 'machine'
-require 'job'
+require_relative 'machine'
+require_relative 'job'
 
 class Cluster
 
@@ -15,6 +15,8 @@ class Cluster
   #
   # length will be be true when we're playing the short version
   # length will be false otherwise
+  # @param {int} game_id is the id of the game
+  # @param {string} is the length of the game
   def initialize ( game_id , length )
     @machine_set = []
     @game_id = game_id
@@ -22,24 +24,24 @@ class Cluster
   end
 
 
+  # Process a job for the cluster
+  #
+  # @param job is a job object that will be processed
+  def processJob ( job )
 
-  def processTurn ( job_data )
-
-    new_job = Job.new( job_data['id'] , job_data['turns_required'] , job_data['memory_required'] )
     update
 
     machine_index = findBestMachine
 
+    # will be true when we need to create another machine
     if machine_index != nil
-      @machine_set[machine_index].add_to_machine(new_job)
+      @machine_set[machine_index].add_to_machine(job)
     else
       new_machine = createNewMachine
-      new_machine.add_to_machine ( new_job )
+      new_machine.add_to_machine ( job )
     end
 
     clusterCleanUp
-
-
   end
 
 

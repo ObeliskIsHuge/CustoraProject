@@ -2,3 +2,4 @@
   of jobs from the api
 - Talk explain in a readME file my thought processes, testing, object intentions,
   where I could of done better, etc.
+- Talk about how why require_relative was used
