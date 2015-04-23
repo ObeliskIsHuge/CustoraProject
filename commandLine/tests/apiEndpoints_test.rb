@@ -59,6 +59,21 @@ class ApiEndpointsTest < Test::Unit::TestCase
     assert_equal(machine_jobs_data['queued'] , 0 , 'queued jobs is not correct')
     assert_equal(machine_jobs_data['running'] , 1 , 'running jobs is not one')
 
+    # Tests the behavior of assigning the same job twice
+    machine_jobs_data2 = assignJobs( game['id'] , machine_data['id'] , id_array)
+    assert_equal(machine_jobs_data2['queued'] , 0 , 'queued jobs is not correct')
+    assert_equal(machine_jobs_data2['running'] , 1 , 'running jobs is not one')
+
+    # Tests the behavior of assigning a job to two machines
+    machine2 = createNewMachine(game['id'])
+    machine_jobs_data = assignJobs(game['id'] , machine2['id'] , id_array)
+    assert_equal(machine_jobs_data['queued'] , 0 , 'queued jobs is not correct')
+    assert_equal(machine_jobs_data['running'] , 1 , 'running jobs is not one')
+
+    machine_jobs_data = assignJobs( game['id'] , machine_data['id'] , id_array)
+    assert_equal(machine_jobs_data['queued'] , 0 , 'queued jobs is not correct')
+    assert_equal(machine_jobs_data['running'] , 1 , 'running jobs is not one')
+
     # Tests the delete machine method
     deleted_machine = deleteMachine(game['id'] , machine_data['id'])
     assert_equal(deleted_machine['id'], machine_data['id'], 'deleted ids are not equal')

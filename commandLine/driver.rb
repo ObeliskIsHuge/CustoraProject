@@ -52,12 +52,18 @@ while game_status != 'completed'
 
 
   jobs_json = turn_json['jobs']
+  job_array = Array.new
 
   # takes the jobs_json and processes each job individually
   jobs_json.each { |x|
     job = Job.new( x['id'] , x['turns_required'], x['memory_required'])
-    cluster.processJob( job )
+    job_array.push ( job )
+
   }
+  job_array.sort_by {|job| job.rating}
+  job_array.reverse
+
+  cluster.process_jobs( job_array )
 
 end
 

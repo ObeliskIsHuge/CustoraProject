@@ -3,13 +3,14 @@
 class Job
 
   # defines getters for our instance variables
-  attr_reader :id, :turns_left, :memory
+  attr_reader :id, :turns_left, :memory , :rating
 
   # Class constructor
   def initialize( id , turns , memory )
     @id = id
     @turns_left = turns
     @memory = memory
+    @rating = turns + memory
   end
 
   # Prints the instance variables of the job object
