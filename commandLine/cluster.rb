@@ -73,7 +73,11 @@ class Cluster
 
     end
 
+    # Sorts the array in descending order to get the really bad jobs first
+    bad_jobs_array.sort_by { |job| job.rating}
+    bad_jobs_array.reverse
 
+    bad_jobs_index = 0
     # Tries to assign bad jobs to machines that can process
     # them immediately
     bad_jobs_array.each do |bad_job|
@@ -84,71 +88,55 @@ class Cluster
             machine.queue_empty && machine.memory_free_next_turn > bad_job.memory
 
           machine.add_to_machine( bad_job )
+          bad_jobs_array.delete_at(bad_jobs_index)
           break
 
         end
       end
+
+      bad_jobs_index += 1
     end
 
 
-    # Adds as many jobs to the machine as possible
+    good_job_index = 0
+    # Adds as many good jobs to the machine as possible
     good_jobs_array.each do |good_job|
 
       @machine_set.each do |machine|
 
+        if machine.should_accept_more_jobs
+          machine.add_to_machine(good_job)
+          good_jobs_array.delete_at(good_job_index)
+          break
+        end
+
       end
+
+      good_job_index += 1
     end
 
 
+    # If either are still running, then create a new machine
+    # to process them and delete the machine when finished
+    if good_jobs_array.empty? || bad_jobs_array.empty?
+
+      new_machine_json = createNewMachine( @game_id )
+      new_machine = Machine.new(new_machine_json['id'], new_machine_json['game_id'] , @length_of_game)
 
 
+      # Processes the bad jobs first
+      bad_jobs_array.each do |bad_job|
+        new_machine.add_to_machine(bad_job)
+      end
+
+      # Processes all the good jobs
+      good_jobs_array.each do |good_job|
+        new_machine.add_to_machine(good_job)
+      end
+
+    end
 
 
-
-
-    # bad_machine_count = 0
-    # # Counts the amount of bad machines
-    # @machine_set.each do |machine|
-    #   if machine.memory_available <= 10 && machine.average_rating_of_queue > fair_rating
-    #     bad_machine_count += 1
-    #   end
-    #
-    # end
-    #
-    # # Will be true when most of the machines are busy
-    # if bad_machine_count >= .75 * @machine_set.count
-    #
-    #   machine_json = createNewMachine( @game_id )
-    #   machine_obj = Machine.new(machine_json['id'] , machine_json['game_id'] , @length_of_game)
-    #
-    #   jobs_array.each do |job|
-    #     machine_obj.add_to_machine(job)
-    #   end
-    # #TODO figure out how to handle this
-    # else
-    #
-    #   rating = average_rating_of_jobs( jobs_array )
-    #   machines_state = state_of_machines
-    #
-    #   jobs_array.each do |job|
-    #
-    #     machine_needed = true
-    #
-    #     while machine_needed
-    #
-    #       @machine_set.each do |machine|
-    #         # machine.
-    #       end
-    #     end
-    #
-    #   end
-    #
-    #
-    #
-    #
-    # end
-
-    cluster_clean_up
   end
 
 
@@ -191,12 +179,6 @@ private
     end
   end
 
-
-  # 'Cleans Up' the cluster. IE. Reallocate jobs as necessary and
-  # deletes machines that are no longer needed
-  def cluster_clean_up
-    #TODO
-  end
 
   # Averages the ratings of a group of jobs
   #
