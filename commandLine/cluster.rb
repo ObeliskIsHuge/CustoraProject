@@ -104,7 +104,7 @@ class Cluster
 
       @machine_set.each do |machine|
 
-        if machine.should_accept_more_jobs
+        if machine.should_accept_more_jobs(good_job)
           machine.add_to_machine(good_job)
           good_jobs_array.delete_at(good_job_index)
           break
@@ -162,15 +162,10 @@ private
     return_array
   end
 
-  # # Creates a new machine. API ENDPOINT NEEDED
-  # def createNewMachine
-  #   #TODO
-  # end
-  #
-  # # Removes a machine from the cluster. API ENDPOINT NEEDED
-  # def removeMachine
-  #   #TODO
-  # end
+  def clean_up
+    #TODO remove machines that have been terminated
+  end
+
 
   # Updates the cluster and all the data
   def update

@@ -52,7 +52,7 @@ while game_status != 'completed'
 
 
   jobs_json = turn_json['jobs']
-  job_array = Array.new
+  job_array = []
 
   # takes the jobs_json and processes each job individually
   jobs_json.each { |x|

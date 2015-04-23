@@ -19,8 +19,6 @@ class Machine
     @game_id = game_id
     @jobs_in_queue = []
     @jobs_in_memory = []
-    # @deleted_indexes_in_memory = []
-    # @deleted_indexes_in_queue = []
     @memory_available = 64
     @terminated = false #TODO this may be unnecessary
 
@@ -144,7 +142,7 @@ private
   def add_to_queue ( job )
 
     temp_array = Array.new
-    temp_array.push( job['id'] )
+    temp_array.push( job.id )
     @jobs_in_queue.push( job )
     assignJobs(@game_id , @machine_id , temp_array)
 
@@ -161,8 +159,8 @@ private
     # Will be true when an error was made somewhere
     raise 'Memory Overflow' if @memory_available < 0
 
-    temp_array = Array.new
-    temp_array.push( job['id'] )
+    temp_array = []
+    temp_array << job.id
     @jobs_in_memory.push( job )
     assignJobs(@game_id , @machine_id , temp_array)
   end
