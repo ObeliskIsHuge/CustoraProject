@@ -88,8 +88,15 @@ def deleteMachine ( game_id , machine_id)
 
   host = 'http://job-queue-dev.elasticbeanstalk.com'
 
-  deleted_machine = RestClient.delete("#{host}/games/#{game_id}/machines/#{machine_id}")
-  JSON.parse(deleted_machine)
+  begin
+    deleted_machine = RestClient.delete("#{host}/games/#{game_id}/machines/#{machine_id}")
+  rescue Exception => e
+    puts 'Machine not turned off correctly'
+  end
+
+  if deleted_machine != nil
+    JSON.parse(deleted_machine)
+  end
 end
 
 # Assigns jobs to a machine

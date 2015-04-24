@@ -38,15 +38,17 @@ new_game_json = createNewGame(game_length)
 game_id = new_game_json['id']
 cluster = Cluster.new(game_id , game_length)
 game_status = 'not completed'
+turn_json = newTurn ( game_id )
+jobs_found = turn_json['jobs'].count
 
 # Keeps running until the game is finished
 while game_status != 'completed'
 
-  turn_json = newTurn ( game_id )
+
 
   # TODO this may need to change
   puts "On turn #{turn_json['current_turn']}, got #{turn_json['jobs'].count} jobs, having
-  completed #{turn_json['jobs_completed']} of #{turn_json['jobs'].count} with #{turn_json['jobs_running']}
+  completed #{turn_json['jobs_completed']} of #{jobs_found} with #{turn_json['jobs_running']}
   jobs running, #{turn_json['jobs_queued']} jobs queued, and
   #{turn_json['machines_running']} machines running"
 
@@ -62,8 +64,13 @@ while game_status != 'completed'
   }
   job_array.sort_by {|job| job.rating}
   job_array.reverse
-
   cluster.process_jobs( job_array )
+
+
+  # prepare for next turn
+  turn_json = newTurn ( game_id )
+  jobs_found += turn_json['jobs'].count
+  game_status = turn_json['status']
 
 end
 

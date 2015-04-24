@@ -18,9 +18,11 @@ class Cluster
   # @param {int} game_id is the id of the game
   # @param {string} is the length of the game
   def initialize ( game_id , length )
-    @machine_set = Array.new
+    @machine_set = []
+    @removed_machines = []
     @game_id = game_id
     @length_of_game = length
+    @turn = 0
   end
 
 
@@ -30,6 +32,16 @@ class Cluster
   def process_jobs ( jobs_array )
 
     update
+    @turn += 1
+
+    if @turn % 10 == 0 && @turn > 10
+
+      @removed_machines.each do |machine|
+        deleteMachine( @game_id , machine.machine_id)
+      end
+
+      @removed_machines = []
+    end
 
     great_rating = 7
     good_rating = 14
@@ -55,8 +67,6 @@ class Cluster
         end
       end
 
-
-
     end
 
     bad_jobs_array = []
@@ -76,6 +86,7 @@ class Cluster
     # Sorts the array in descending order to get the really bad jobs first
     bad_jobs_array.sort_by { |job| job.rating}
     bad_jobs_array.reverse
+
 
     bad_jobs_index = 0
     # Tries to assign bad jobs to machines that can process
@@ -118,7 +129,7 @@ class Cluster
 
     # If either are still running, then create a new machine
     # to process them and delete the machine when finished
-    if good_jobs_array.empty? || bad_jobs_array.empty?
+    if good_jobs_array.count > 0  || bad_jobs_array.count > 0
 
       new_machine_json = createNewMachine( @game_id )
       new_machine = Machine.new(new_machine_json['id'], new_machine_json['game_id'] , @length_of_game)
@@ -133,6 +144,9 @@ class Cluster
       good_jobs_array.each do |good_job|
         new_machine.add_to_machine(good_job)
       end
+
+      # new_machine.delete_when_empty
+      @machine_set.push( new_machine )
 
     end
 
@@ -169,8 +183,15 @@ private
 
   # Updates the cluster and all the data
   def update
+    index = 0
     @machine_set.each do |machine|
-      machine.update
+      machine.update_machine
+
+      if machine.dead_machine
+        @removed_machines.push ( machine )
+        @machine_set.delete_at(index)
+      end
+      index += 1
     end
   end
 

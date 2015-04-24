@@ -7,7 +7,8 @@ require_relative 'apiEndpoints'
 class Machine
 
   # defines getters for our instance variables
-  attr_reader :machine_id, :game_id, :terminated , :memory_available
+  attr_reader :machine_id, :game_id, :terminate , :memory_available ,
+              :jobs_in_memory , :jobs_in_queue, :max_queue_length
 
 
   # class constructor
@@ -20,13 +21,13 @@ class Machine
     @jobs_in_queue = []
     @jobs_in_memory = []
     @memory_available = 64
-    @terminated = false #TODO this may be unnecessary
+    @terminate = false
 
     # Determines how long we want our job queue to be
     if game_length.eql?('short')
-      @max_queue_length = 20
-    else
       @max_queue_length = 40
+    else
+      @max_queue_length = 80
     end
 
   end
@@ -37,7 +38,7 @@ class Machine
   end
 
   # method updates the machine object
-  def update
+  def update_machine
 
     index = 0
     @jobs_in_memory.each do |job|
@@ -80,6 +81,21 @@ class Machine
     end
 
     sum_of_turns
+  end
+
+  # Determines if the machine is ready to be removed
+  def dead_machine
+
+    if @jobs_in_queue.count == 0 && jobs_in_memory.count == 0
+      return true
+    end
+    false
+  end
+
+  # Machine will be deleted when finished
+  def delete_when_empty
+    # deleteMachine(@game_id , @machine_id)
+    @terminate = true
   end
 
   # Returns the sum of the memory that will be free next turn
@@ -146,7 +162,7 @@ private
     @jobs_in_queue.push( job )
     assignJobs(@game_id , @machine_id , temp_array)
 
-    raise 'Too many jobs in queue' if @jobs_in_queue.count > @max_queue_length
+    # raise 'Too many jobs in queue' if @jobs_in_queue.count > @max_queue_length
   end
 
   # Adds a job to the memory array and api endpoint
@@ -157,7 +173,7 @@ private
     @memory_available -= job.memory
 
     # Will be true when an error was made somewhere
-    raise 'Memory Overflow' if @memory_available < 0
+    # raise 'Memory Overflow' if @memory_available < 0
 
     temp_array = []
     temp_array << job.id
